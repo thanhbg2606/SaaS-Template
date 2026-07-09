@@ -12,7 +12,7 @@ Tài liệu được tổ chức theo **thể loại** (Diátaxis‑lite): *refe
 
 | Bạn là… | Đọc theo thứ tự |
 |---|---|
-| **Fork để làm sản phẩm mới** | [guides/reskin-fork](./guides/reskin-fork.md) → [architecture/overview](./architecture/overview.md) → [kernel-product (§32)](./architecture/kernel-product.md) → ADR [0002](./decisions/0002-multitenancy-pool-rls.md) & [0003](./decisions/0003-modular-monolith.md) |
+| **Fork để làm sản phẩm mới** | [guides/fork-from-template](./guides/fork-from-template.md) → [guides/reskin-fork](./guides/reskin-fork.md) → [architecture/overview](./architecture/overview.md) → [kernel-product (§32)](./architecture/kernel-product.md) → ADR [0002](./decisions/0002-multitenancy-pool-rls.md) & [0003](./decisions/0003-modular-monolith.md) |
 | **Thêm một domain module** | [guides/module-extension](./guides/module-extension.md) → [architecture/data-model](./architecture/data-model.md) → trụ cột liên quan trong [pillars/](./architecture/pillars/) |
 | **Vận hành (deploy / on‑call)** | [runbooks/](./runbooks/) → [§26 CI/CD](./architecture/pillars/26-cicd-release.md) → [§21 Observability](./architecture/pillars/21-observability.md) |
 | **Đóng góp code** | [../CONTRIBUTING.md](../CONTRIBUTING.md) → [decisions/](./decisions/) (hiểu "tại sao" trước khi đổi) |
@@ -39,6 +39,7 @@ Tài liệu được tổ chức theo **thể loại** (Diátaxis‑lite): *refe
 | [§27 DX](./architecture/pillars/27-dx.md) | [§28 Testing](./architecture/pillars/28-testing.md) | |
 
 ### Hướng dẫn (how‑to — "tôi cần làm X") — `guides/`
+- [Fork từ template](./guides/fork-from-template.md) — playbook ngày đầu cho team nội bộ: boot local, rebrand tối thiểu, bắt đầu feature đầu tiên
 - [Fork & Reskin](./guides/reskin-fork.md) — biến template thành sản phẩm có brand riêng (≤ 30 phút)
 - [Thêm Product module](./guides/module-extension.md) — thêm domain mới mà không đụng Kernel + tham chiếu Kernel Contracts
 

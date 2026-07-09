@@ -38,7 +38,7 @@ UUID v7 · `workspace_id` + RLS trên mọi bảng tenant · tạo `audit_logs` 
 - ✅ **Frontend stack** → **Inertia v2 + React + TS + Tailwind + shadcn** ([ADR-0015](../decisions/0015-frontend-inertia-react.md)).
 - ⬜ **Provider cụ thể**: mail (Resend hay Postmark), OAuth (chỉ Google hay thêm GitHub).
 - ⬜ **Host deploy** (Forge / Vapor) cho CI Phase 1.
-- ⬜ **Đường dẫn repo greenfield** + môi trường PHP 8.3+/Composer/Docker.
+- ⬜ **Đường dẫn repo greenfield** + môi trường PHP 8.4.1+/Composer/Docker.
 
 ## Tiền đề kỹ thuật
 Docker (Sail) · Stripe test account (Phase 5) · Resend/Postmark key hoặc Mailpit (dev).

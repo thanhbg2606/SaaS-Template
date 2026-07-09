@@ -1,0 +1,40 @@
+deptrac:
+  paths:
+    - ./app
+  layers:
+    - name: Kernel
+      collectors:
+        - type: directory
+          value: app/Kernel/.*
+    - name: Product
+      collectors:
+        - type: directory
+          value: app/Product/.*
+    - name: Controller
+      collectors:
+        - type: classLike
+          value: .*Controller.*
+    - name: Service
+      collectors:
+        - type: classLike
+          value: .*Service.*
+    - name: Repository
+      collectors:
+        - type: classLike
+          value: .*Repository.*
+  ruleset:
+    Kernel: ~
+    Product:
+      - Kernel
+    Controller:
+      - Service
+    Service:
+      - Repository
+      - Kernel
+      - Product
+    Repository: ~
+  # Uncovered classes (Models, Middleware, Providers, Actions, Requests…) are
+  # expected at Phase 1 — they will migrate into Kernel/* or Product/* as
+  # Phase 2–5 build the module structure out.
+  # Use `deptrac analyse --fail-on-uncovered` in CI only after Phase 3.
+  ignore_uncovered_internal_classes: true

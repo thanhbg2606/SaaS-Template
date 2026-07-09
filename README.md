@@ -7,47 +7,50 @@ Tài liệu kiến trúc đầy đủ: [`docs/`](./docs/README.md) (mục lục 
 
 ---
 
-## Có sẵn những gì (12 trụ cột)
+## Có sẵn hiện tại
 
-Identity (Fortify + Sanctum + Socialite) · Multi-tenancy (Pool + RLS) · Billing (Cashier/Stripe) · Lifecycle (onboarding, invite, GDPR delete) · Eventing (Events → outbox) · Observability (Sentry + Pulse + OTel) · Audit log (append-only) · Notifications (mail + inbox + broadcast) · Files (signed S3 URL) · Admin (Filament) · Feature flags (Pennant) · DX (Sail, một lệnh để dev).
+- Laravel starter app chính thức với React + Inertia + TypeScript
+- Auth starter mặc định của Laravel/Fortify
+- Docker-first local development với `compose.yaml` + Laravel Sail
+- PostgreSQL, Redis, Mailpit cho môi trường dev
+- Boundary skeleton ban đầu: `app/Kernel`, `app/Product`, `config/product.php`
+- Demo data với 4 tài khoản `*@demo.test`
+- Smoke test cho route `/`
+- Luật ranh giới ban đầu bằng `deptrac`
 
 ## Tech stack
 
 | Lớp | Công nghệ |
 |---|---|
-| Runtime | PHP 8.3+, Laravel 11+ (PHP-FPM hoặc Octane) |
-| Database | PostgreSQL 16+ (`pgvector`, `pg_trgm`) |
-| Cache / Queue / WS scaling | Redis 7 |
-| Auth | Fortify + Sanctum (+ Socialite, Passport tùy chọn) |
-| Permissions | `spatie/laravel-permission` |
-| Billing | Laravel Cashier (Stripe) |
-| Background jobs | Queue (Redis) + Horizon |
-| Real-time | Laravel Reverb + Echo |
-| Search | Laravel Scout (database → Meilisearch) + pgvector |
-| Feature flags | Laravel Pennant |
-| Audit log | `spatie/laravel-activitylog` |
-| Admin panel | Filament |
-| Storage | S3 / Cloudflare R2 |
-| Email | Resend / Postmark |
-| Observability | Sentry + Pulse + OpenTelemetry |
-| Test / Lint / Boundary | Pest · Pint · Larastan · **deptrac** |
+| Runtime | PHP 8.4.1+ (Sail runtime mặc định là 8.5), Laravel 13 |
+| Frontend | React 19, Inertia, TypeScript, Tailwind CSS 4, Vite |
+| Database | PostgreSQL 18 (Sail) |
+| Cache / Queue backing | Redis |
+| Email dev | Mailpit |
+| Auth | Laravel Fortify + starter auth pages |
+| Test / Lint / Boundary | PHPUnit, Pint, Larastan, Deptrac |
 | Local dev | Laravel Sail (Docker) |
 
 ## Kiến trúc tóm tắt
 
-**Modular Monolith**, một deployable, một Postgres. Bên trong tách hai trục:
+Repository hiện ở giai đoạn đầu của một **Modular Monolith**: một ứng dụng Laravel chạy được, có sẵn seam để mở rộng tiếp thành template SaaS đầy đủ.
 
-- **Module:** `app/Kernel/*` (mọi SaaS đều có) + `app/Product/*` (domain của bạn). **Kernel không bao giờ import Product.**
-- **Layer:** Controller → Service → Repository.
+- `app/Kernel/*` dành cho capability dùng chung
+- `app/Product/*` dành cho domain nghiệp vụ của sản phẩm
+- `config/product.php` là ranh giới cấu hình cho brand, feature flags, plan, onboarding
+- `deptrac.yaml` đang ép bộ quy tắc đầu tiên cho các lớp `Kernel`, `Product`, `Controller`, `Service`, `Repository`
 
-Module giao tiếp qua **interface + domain event**, không với tay vào model của module khác. Ranh giới ép bằng `deptrac` ở CI. Chi tiết: [§4.3 phân lớp & §4.5 seam](./docs/architecture/overview.md) và [§32 tách Kernel/Product](./docs/architecture/kernel-product.md).
+Chi tiết định hướng kiến trúc dài hạn vẫn nằm trong [`docs/`](./docs/README.md), nhưng code hiện tại mới chỉ implement phần scaffold chạy được + boundary entry points ban đầu.
 
 ---
 
 ## Yêu cầu
 
-- Docker + Docker Compose (cho Sail), hoặc PHP 8.3+ / Composer / Node 20+ / Postgres / Redis cài sẵn.
-- Tài khoản Stripe (test mode) để chạy billing.
+- Docker + Docker Compose
+- Một cách để chạy `composer install` lần đầu:
+  - Host `PHP 8.4.1+` + `composer`, hoặc
+  - Dockerized Composer fallback
+- Node/npm chỉ cần nếu bạn muốn cài frontend dependency ngoài container; nếu không có thể dùng `./vendor/bin/sail npm ...`
 
 ## Khởi động nhanh (≤ 10 phút)
 
@@ -55,18 +58,28 @@ Module giao tiếp qua **interface + domain event**, không với tay vào model
 # 1. Clone
 git clone <repo-url> my-saas && cd my-saas
 
-# 2. Cấu hình
+# 2. Cấu hình env
 cp .env.example .env
-composer install
-php artisan key:generate
 
-# 3. Boot hạ tầng (Postgres + Redis + Mailpit + pgweb)
+# 3. Cài PHP dependencies
+composer install
+# hoặc nếu máy không có composer:
+# docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/app" -w /app composer:2 composer install
+
+# 4. Boot Sail stack
 ./vendor/bin/sail up -d
 
-# 4. Migrate + seed dữ liệu demo
+# 5. Tạo app key và cài frontend dependencies
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail npm install
+
+# 6. Migrate + seed dữ liệu demo
 ./vendor/bin/sail artisan migrate --seed
 
-# 5. Chạy app + queue worker + WS + Vite (hot reload)
+# 7. Kiểm tra baseline hoạt động
+./vendor/bin/sail artisan test tests/Feature/TemplateSmokeTest.php
+
+# 8. Chạy quy trình dev mặc định của starter
 ./vendor/bin/sail composer dev
 ```
 
@@ -74,24 +87,22 @@ Sau khi chạy:
 
 | Dịch vụ | URL |
 |---|---|
-| App | http://localhost |
-| Admin (Filament) | http://localhost/admin |
-| Mailpit (đọc email dev) | http://localhost:8025 |
-| pgweb (xem DB) | http://localhost:8081 |
-| Horizon (queue) | http://localhost/horizon |
-| Pulse (perf) | http://localhost/pulse |
-| Telescope (debug) | http://localhost/telescope |
-
-> Nếu engineer mới không thể `git clone && sail up` và chạm app trong 10 phút → đó là bug, hãy sửa.
+| App | http://localhost:8000 |
+| Vite dev server | http://localhost:5173 |
+| Mailpit | http://localhost:8025 |
+| PostgreSQL | localhost:5432 |
+| Redis | localhost:6379 |
 
 ### Tài khoản seed
 
 | Email | Mật khẩu | Vai trò |
 |---|---|---|
-| owner@demo.test | password | owner (workspace demo) |
+| owner@demo.test | password | owner |
 | admin@demo.test | password | admin |
 | member@demo.test | password | member |
 | viewer@demo.test | password | viewer |
+
+Mật khẩu mặc định hiện tại là `password`, đi ra từ `UserFactory`. Nếu bạn thay factory/seeder sau này, dùng flow reset password cục bộ để tạo lại credential phù hợp.
 
 ---
 
@@ -99,42 +110,40 @@ Sau khi chạy:
 
 ```
 app/
-  Kernel/                 ← mọi SaaS đều có (KHÔNG import Product)
-    Auth/  Tenancy/  Billing/  Notifications/
-    Audit/  Files/  Search/  Flags/  Admin/  Support/
-    Contracts/            ← interface (port): Mailer, Storage, Bus, Meter, Flags, Cache
-  Product/                ← domain của bạn
-    Projects/  Issues/  ...
-      Models/  Services/  Http/  Jobs/  Events/  Policies/
+  Kernel/
+    Contracts/
+    Support/
+  Product/
+    Projects/
 config/
-  product.php             ← brand, features, plans (config-over-code)
+  product.php
 database/
   migrations/  seeders/  factories/
 docs/
-  decisions/              ← ADR (xem ADR-log.md)
+  decisions/
   runbooks/
 routes/
-tests/                    ← Pest
-deptrac.yaml              ← ranh giới module
+tests/                    ← PHPUnit feature tests
+deptrac.yaml              ← luật ranh giới ban đầu
 ```
 
 ## Lệnh thường dùng
 
 ```bash
 # Dev
-sail composer dev              # app + worker + reverb + vite
-sail artisan migrate           # chạy migration
-sail artisan migrate:fresh --seed
-sail artisan db:seed
+./vendor/bin/sail up -d
+./vendor/bin/sail composer dev
+./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan migrate:fresh --seed
+./vendor/bin/sail artisan db:seed
+./vendor/bin/sail npm install
 
 # Chất lượng (chạy trước khi push)
-sail composer test             # Pest
-sail composer lint             # Pint (PSR-12)
-sail composer stan             # Larastan
-sail composer deptrac          # kiểm tra ranh giới module
-sail composer check            # chạy tất cả gate trên
-
-# Tạo module Product mới (xem module-extension-guide.md)
+./vendor/bin/sail composer test
+./vendor/bin/sail composer lint
+./vendor/bin/sail composer types:check
+./vendor/bin/sail composer deptrac
+./vendor/bin/sail composer check
 ```
 
 ## Môi trường
@@ -143,7 +152,7 @@ sail composer check            # chạy tất cả gate trên
 dev (laptop) → preview (per-PR) → staging → production
 ```
 
-Production deploy qua **Forge** (VPS) hoặc **Vapor** (serverless). Marketing + docs deploy **tách riêng** trên CDN. Chi tiết §26.
+Chiến lược triển khai dài hạn vẫn nằm trong tài liệu kiến trúc, nhưng working tree hiện tại mới verify ở mức local `Dev ready`.
 
 ---
 
@@ -154,7 +163,7 @@ Production deploy qua **Forge** (VPS) hoặc **Vapor** (serverless). Marketing +
 | [`docs/`](./docs/README.md) | **Mục lục tài liệu** + lối đọc theo vai trò (cổng vào nội dung sâu) |
 | [`docs/architecture/`](./docs/README.md) | Kiến trúc: [tổng quan §1–4](./docs/architecture/overview.md), [§5 multi‑tenancy](./docs/architecture/multi-tenancy.md), [§32 kernel/product](./docs/architecture/kernel-product.md), [data‑model](./docs/architecture/data-model.md), [trụ cột §6–28](./docs/architecture/pillars/) |
 | [`docs/decisions/`](./docs/decisions/README.md) | 14 ADR (mỗi quyết định 1 file) + template |
-| [`docs/guides/`](./docs/guides/module-extension.md) | [Fork & reskin](./docs/guides/reskin-fork.md) · [Thêm Product module](./docs/guides/module-extension.md) |
+| [`docs/guides/`](./docs/guides/fork-from-template.md) | [Fork từ template](./docs/guides/fork-from-template.md) · [Fork & reskin](./docs/guides/reskin-fork.md) · [Thêm Product module](./docs/guides/module-extension.md) |
 | [`docs/runbooks/`](./docs/runbooks/README.md) | Vận hành: deploy · rollback · incident/on‑call |
 | [`docs/strategy/`](./docs/strategy/pricing-packaging.md) | §29–§35: pricing, analytics, support, lộ trình 14 phase |
 | [`CONTRIBUTING.md`](./CONTRIBUTING.md) | Quy trình đóng góp, branch, commit, coding standard |
