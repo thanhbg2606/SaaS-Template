@@ -57,6 +57,9 @@ refactor(auth): tách logic MFA ra MfaService
 1. Tạo nhánh từ `main`.
 2. Code + viết test. Chạy `./vendor/bin/sail composer check` (lint + stan + deptrac + test)
    cho **xanh ở local** trước khi push.
+   Hook `pre-commit` của repo cũng sẽ tự chạy `./vendor/bin/sail npm run lint:check`
+   khi bạn commit các file frontend hoặc config lint liên quan, miễn là đã chạy
+   `./vendor/bin/sail npm install` trước đó.
 3. Mở PR, điền template (mô tả, ảnh chụp nếu là UI, cách test, và mọi exception với constitution nếu có).
 4. CI phải pass toàn bộ gate. Cần ≥ 1 review approve.
 5. Squash-merge vào `main` (giữ history sạch).

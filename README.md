@@ -70,6 +70,9 @@ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/app" -w /app composer:2 compose
 ./vendor/bin/sail artisan key:generate
 ./vendor/bin/sail npm install
 
+# Hook pre-commit sẽ tự được cài sau npm install
+# và sẽ chặn commit nếu frontend lint fail
+
 # 6. Migrate + seed dữ liệu demo
 ./vendor/bin/sail artisan migrate --seed
 
@@ -145,6 +148,8 @@ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/app" -w /app composer:2 compose
 ./vendor/bin/sail composer deptrac
 ./vendor/bin/sail composer check
 ```
+
+Nếu bạn đã cài frontend dependencies bằng `./vendor/bin/sail npm install`, repo sẽ tự cấu hình Git `pre-commit` hook để chạy `npm run lint:check` trong Sail mỗi khi commit các file frontend hoặc config liên quan.
 
 ## Môi trường
 
