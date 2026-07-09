@@ -13,7 +13,7 @@ Phase 1 Skeleton ─► Phase 2 Auth ─► Phase 3 Tenancy ─┬─► Phase 4
 
 | Phase | Mục tiêu | "Done" khi | Tham chiếu |
 |---|---|---|---|
-| **1. Skeleton** (2d) | App rỗng chạy, CI xanh, ranh giới Kernel/Product dựng sẵn | `git clone && sail up` → app load; `composer check` xanh; deptrac chạy | [§4](../architecture/overview.md), [§26](../architecture/pillars/26-cicd-release.md), [§27](../architecture/pillars/27-dx.md), [§32](../architecture/kernel-product.md) · ADR [0001](../decisions/0001-postgresql.md)/[0003](../decisions/0003-modular-monolith.md)/[0004](../decisions/0004-layering.md)/[0007](../decisions/0007-uuid-v7.md)/[0014](../decisions/0014-deptrac-boundaries.md)/[0015](../decisions/0015-frontend-inertia-react.md) |
+| **1. Skeleton** (2d) | App rỗng chạy, CI xanh, ranh giới Kernel/Product dựng sẵn | `git clone && sail up` → app load; `./vendor/bin/sail composer check` xanh; deptrac chạy | [§4](../architecture/overview.md), [§26](../architecture/pillars/26-cicd-release.md), [§27](../architecture/pillars/27-dx.md), [§32](../architecture/kernel-product.md) · ADR [0001](../decisions/0001-postgresql.md)/[0003](../decisions/0003-modular-monolith.md)/[0004](../decisions/0004-layering.md)/[0007](../decisions/0007-uuid-v7.md)/[0014](../decisions/0014-deptrac-boundaries.md)/[0015](../decisions/0015-frontend-inertia-react.md) |
 | **2. Auth** (2d) | Đăng ký/verify/login/reset/MFA | signup→verify→logout→login→reset chạy | [§6](../architecture/pillars/06-auth.md) · ADR [0005](../decisions/0005-auth-strategy.md) |
 | **3. Tenancy** (2d) | Cô lập tenant 2 lớp (scope + RLS), RBAC | Teammate được mời chỉ thấy workspace mình; cross‑tenant bị RLS chặn | [§5](../architecture/multi-tenancy.md), [§7](../architecture/pillars/07-accounts-teams.md) · ADR [0002](../decisions/0002-multitenancy-pool-rls.md) |
 | **4. Notifications** (1d) | Mail + inbox + broadcast, preference | Invite email tới Mailpit + inbox; bell hiện mention | [§14](../architecture/pillars/14-notifications.md) |
@@ -38,7 +38,7 @@ UUID v7 · `workspace_id` + RLS trên mọi bảng tenant · tạo `audit_logs` 
 - ✅ **Frontend stack** → **Inertia v2 + React + TS + Tailwind + shadcn** ([ADR-0015](../decisions/0015-frontend-inertia-react.md)).
 - ⬜ **Provider cụ thể**: mail (Resend hay Postmark), OAuth (chỉ Google hay thêm GitHub).
 - ⬜ **Host deploy** (Forge / Vapor) cho CI Phase 1.
-- ⬜ **Đường dẫn repo greenfield** + môi trường PHP 8.4.1+/Composer/Docker.
+- ⬜ **Đường dẫn repo greenfield** + bootstrap hoàn toàn qua Docker/Compose.
 
 ## Tiền đề kỹ thuật
 Docker (Sail) · Stripe test account (Phase 5) · Resend/Postmark key hoặc Mailpit (dev).

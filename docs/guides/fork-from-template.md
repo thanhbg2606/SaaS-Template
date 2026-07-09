@@ -36,6 +36,7 @@ Quy tắc quan trọng nhất:
 
 - **Code domain của sản phẩm đi vào `app/Product/*`**
 - **Không sửa `app/Kernel/*` nếu chưa thật sự cần**
+- **Mọi lệnh dự án chạy trong Docker; sau bootstrap thì dùng `./vendor/bin/sail ...`**
 
 Nếu cần lý do kiến trúc đằng sau quy tắc này, đọc [§32 Tách Kernel / Product](../architecture/kernel-product.md).
 
@@ -75,12 +76,6 @@ MAIL_PORT=1025
 ```
 
 ### 3. Cài dependencies
-
-```bash
-composer install
-```
-
-Nếu máy không có `composer`, dùng Dockerized Composer:
 
 ```bash
 docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/app" -w /app composer:2 composer install
@@ -231,7 +226,7 @@ Khi local đã chạy và brand tối thiểu đã đổi xong, bước tiếp t
 - [ ] Clone được repo sản phẩm mới
 - [ ] Thêm `template-upstream` remote nếu cần giữ đường pull từ template
 - [ ] Copy `.env.example` sang `.env`
-- [ ] `composer install` xong
+- [ ] `docker run ... composer install` xong
 - [ ] `./vendor/bin/sail up -d` chạy được
 - [ ] `./vendor/bin/sail artisan migrate --seed` chạy được
 - [ ] `./vendor/bin/sail artisan test tests/Feature/TemplateSmokeTest.php` xanh

@@ -47,10 +47,9 @@ Chi tiết định hướng kiến trúc dài hạn vẫn nằm trong [`docs/`](
 ## Yêu cầu
 
 - Docker + Docker Compose
-- Một cách để chạy `composer install` lần đầu:
-  - Host `PHP 8.4.1+` + `composer`, hoặc
-  - Dockerized Composer fallback
-- Node/npm chỉ cần nếu bạn muốn cài frontend dependency ngoài container; nếu không có thể dùng `./vendor/bin/sail npm ...`
+- Không yêu cầu host cài sẵn PHP, Composer, Node, hay npm cho các lệnh của dự án
+- Mọi lệnh của dự án MUST chạy trong môi trường Docker; trước khi có `vendor/bin/sail`,
+  bootstrap bằng container Composer
 
 ## Khởi động nhanh (≤ 10 phút)
 
@@ -62,9 +61,7 @@ git clone <repo-url> my-saas && cd my-saas
 cp .env.example .env
 
 # 3. Cài PHP dependencies
-composer install
-# hoặc nếu máy không có composer:
-# docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/app" -w /app composer:2 composer install
+docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/app" -w /app composer:2 composer install
 
 # 4. Boot Sail stack
 ./vendor/bin/sail up -d
@@ -130,6 +127,9 @@ deptrac.yaml              ← luật ranh giới ban đầu
 ## Lệnh thường dùng
 
 ```bash
+# Bootstrap trước khi có Sail
+docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/app" -w /app composer:2 composer install
+
 # Dev
 ./vendor/bin/sail up -d
 ./vendor/bin/sail composer dev

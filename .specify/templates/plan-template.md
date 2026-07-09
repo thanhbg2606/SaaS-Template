@@ -30,6 +30,8 @@
 
 **Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]
 
+**Execution Environment**: [e.g., Docker via ./vendor/bin/sail, docker compose exec, or NEEDS CLARIFICATION]
+
 **Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]
 
 **Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]
@@ -46,6 +48,7 @@
 - [ ] Testing: required unit, integration, and end-to-end evidence is listed, and any omitted layer has a written justification.
 - [ ] UX consistency: affected flows, shared patterns, and loading/empty/error/accessibility states are identified.
 - [ ] Performance: latency or throughput budgets, hot paths, caching, and async/offload strategy are documented.
+- [ ] Docker execution: every project command in setup, validation, and rollout steps is expressed through the repository Docker environment.
 - [ ] Exceptions: any constitution waiver records scope, risk, mitigation, owner, and cleanup trigger.
 
 ## Project Structure

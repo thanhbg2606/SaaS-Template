@@ -13,6 +13,10 @@ description: "Task list template for feature implementation"
 constitution-required evidence. Omit a test layer only when `plan.md` documents
 an approved exception.
 
+**Command Execution**: Any task that asks an engineer to run project commands
+MUST name the Docker/Sail form explicitly (for example `./vendor/bin/sail
+artisan test`, `./vendor/bin/sail composer check`, or `docker compose exec`).
+
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
 ## Format: `[ID] [P?] [Story] Description`
@@ -256,6 +260,7 @@ With multiple developers:
 - Each user story should be independently completable and testable
 - Verify tests fail before implementing
 - Record any constitution exception directly in the relevant task or linked plan item
+- When a task includes command execution, write the Docker/Sail command form explicitly
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence

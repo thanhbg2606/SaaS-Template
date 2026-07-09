@@ -1,22 +1,21 @@
 <!--
 Sync Impact Report
-Version change: template -> 1.0.0
+Version change: 1.0.0 -> 1.1.0
 Modified principles:
-- Template principle slot 1 -> I. Code Quality by Design
-- Template principle slot 2 -> II. Test Evidence Over Assumption
-- Template principle slot 3 -> III. Consistent User Experience
-- Template principle slot 4 -> IV. Performance Is a Feature
-- Template principle slot 5 -> V. Balanced Delivery, Explicit Exceptions
+ - None
 Added sections:
-- Engineering Constraints
-- Delivery Workflow & Quality Gates
+ - None
 Removed sections:
-- None
+ - None
 Templates requiring updates:
 - ✅ updated .specify/templates/plan-template.md
 - ✅ updated .specify/templates/spec-template.md
 - ✅ updated .specify/templates/tasks-template.md
+- ✅ updated README.md
 - ✅ updated CONTRIBUTING.md
+- ✅ updated docs/guides/fork-from-template.md
+- ✅ updated docs/architecture/pillars/27-dx.md
+- ✅ updated docs/strategy/implementation-plan-phase1-5.md
 - ⚠ pending .specify/templates/commands/*.md (directory not present in this repository)
 Follow-up TODOs:
 - None
@@ -69,6 +68,13 @@ compound into fragile systems.
 
 - Kernel MUST NOT import Product code, and module boundaries MUST remain
   enforceable with `deptrac`.
+- All repository commands for PHP, Composer, Node, npm, Artisan, tests, lint,
+  builds, and code generation MUST run inside the project's Docker environment.
+  After dependencies exist, use `./vendor/bin/sail ...` or
+  `docker compose exec ...`; before Sail is available, bootstrap through
+  Dockerized utilities such as `docker run ... composer install`. Direct host
+  execution of project commands is prohibited unless an explicit constitution
+  exception is approved.
 - Business rules MUST live in services or domain-level collaborators; controllers,
   jobs, and UI handlers orchestrate but do not own core logic.
 - Tenant-scoped behavior MUST preserve `workspace_id` isolation, auditability,
@@ -84,14 +90,16 @@ compound into fragile systems.
 - `spec.md` MUST capture the user journey, quality requirements, UX states, and
   measurable success criteria, including performance expectations when relevant.
 - `plan.md` MUST complete the Constitution Check with code-quality impact, test
-  strategy, UX consistency approach, performance budget, and any requested
-  exception records.
+  strategy, UX consistency approach, performance budget, Docker execution path,
+  and any requested exception records.
 - `tasks.md` MUST include the test work needed to produce the promised evidence,
-  plus UX-state validation and performance or observability tasks when the
-  feature changes those concerns.
+  plus UX-state validation, performance or observability tasks when the feature
+  changes those concerns, and Docker-based verification commands where command
+  execution is part of the task.
 - PRs and reviews MUST verify constitution compliance, document exceptions, and
   include screenshots or interaction notes for UI changes plus validation notes
-  for performance-sensitive work.
+  for performance-sensitive work and confirmation that project commands were run
+  through Docker.
 
 ## Governance
 
@@ -104,4 +112,4 @@ clarifications that do not change enforcement. Compliance is reviewed in every
 feature plan and pull request; unresolved violations MUST be documented as
 explicit exceptions before merge.
 
-**Version**: 1.0.0 | **Ratified**: 2026-07-01 | **Last Amended**: 2026-07-01
+**Version**: 1.1.0 | **Ratified**: 2026-07-01 | **Last Amended**: 2026-07-09

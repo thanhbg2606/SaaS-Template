@@ -106,6 +106,7 @@
 - **QXR-002**: The feature MUST define user-visible loading, empty, error, and success states for each affected journey.
 - **QXR-003**: The feature MUST identify the automated test evidence required at unit, integration, and end-to-end layers, or justify why a layer is intentionally omitted.
 - **QXR-004**: The feature MUST state any relevant performance budget, scalability limit, or async/offload expectation for the primary journey.
+- **QXR-005**: Any setup, validation, or operational command referenced for the feature MUST specify its Docker/Sail execution path when developer verification is required.
 
 ### Key Entities *(include if feature involves data)*
 

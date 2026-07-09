@@ -6,7 +6,15 @@ Cảm ơn bạn đã đóng góp. Tài liệu này mô tả quy trình làm vi�
 
 ## 1. Thiết lập môi trường
 
-Xem [`README.md`](./README.md) → "Khởi động nhanh". Tóm tắt: `cp .env.example .env`, `composer install`, `sail up -d`, `sail artisan migrate --seed`, `sail composer dev`.
+Xem [`README.md`](./README.md) → "Khởi động nhanh". Tóm tắt:
+`cp .env.example .env`, `docker run ... composer install`,
+`./vendor/bin/sail up -d`, `./vendor/bin/sail artisan migrate --seed`,
+`./vendor/bin/sail composer dev`.
+
+Quy tắc bắt buộc: mọi lệnh của dự án phải chạy trong môi trường Docker.
+Sau khi có `vendor/bin/sail`, dùng `./vendor/bin/sail ...` hoặc
+`docker compose exec ...`; không chạy trực tiếp `php`, `composer`, `npm`,
+`node`, hay `artisan` trên host cho codebase này trừ khi có exception được ghi rõ.
 
 ## 2. Branch strategy
 
@@ -47,14 +55,16 @@ refactor(auth): tách logic MFA ra MfaService
 ## 4. Quy trình Pull Request
 
 1. Tạo nhánh từ `main`.
-2. Code + viết test. Chạy `sail composer check` (lint + stan + deptrac + test) cho **xanh ở local** trước khi push.
+2. Code + viết test. Chạy `./vendor/bin/sail composer check` (lint + stan + deptrac + test)
+   cho **xanh ở local** trước khi push.
 3. Mở PR, điền template (mô tả, ảnh chụp nếu là UI, cách test, và mọi exception với constitution nếu có).
 4. CI phải pass toàn bộ gate. Cần ≥ 1 review approve.
 5. Squash-merge vào `main` (giữ history sạch).
 
 ### PR checklist
 
-- [ ] Đã chạy `sail composer check` xanh ở local.
+- [ ] Đã chạy `./vendor/bin/sail composer check` xanh ở local.
+- [ ] Mọi lệnh xác minh trong PR được chạy qua Docker/Sail, không chạy trực tiếp trên host.
 - [ ] Có test cho hành vi mới / bug đã fix.
 - [ ] Nếu có ngoại lệ về test, UX, performance, hoặc quality gate, PR đã ghi rõ phạm vi, rủi ro, mitigation, owner, và điều kiện cleanup.
 - [ ] Bảng mới (nếu có) theo convention: `id` (UUID v7), `workspace_id`, `created_at`, `updated_at`, có RLS policy.
@@ -68,10 +78,10 @@ refactor(auth): tách logic MFA ra MfaService
 
 | Khía cạnh | Chuẩn | Công cụ |
 |---|---|---|
-| Code style | PSR-12 | **Pint** (`sail composer lint`) |
-| Static analysis | Larastan level 6+ | `sail composer stan` |
-| Ranh giới kiến trúc | Kernel/Product + layering | **deptrac** (`sail composer deptrac`) |
-| Test | Pest | `sail composer test` |
+| Code style | PSR-12 | **Pint** (`./vendor/bin/sail composer lint`) |
+| Static analysis | Larastan level 6+ | `./vendor/bin/sail composer stan` |
+| Ranh giới kiến trúc | Kernel/Product + layering | **deptrac** (`./vendor/bin/sail composer deptrac`) |
+| Test | Pest | `./vendor/bin/sail composer test` |
 
 ### Quy ước đặt tên
 
@@ -104,9 +114,9 @@ Kim tự tháp: Unit (60–70%) · Integration với DB thật (20–30%) · E2E
 - Nhắm ~70% coverage trên package logic nặng. Đừng test getter tầm thường.
 
 ```bash
-sail composer test                          # toàn bộ
-sail artisan test --filter=BillingTest      # một nhóm
-sail artisan test --coverage                # kèm coverage
+./vendor/bin/sail composer test                          # toàn bộ
+./vendor/bin/sail artisan test --filter=BillingTest      # một nhóm
+./vendor/bin/sail artisan test --coverage                # kèm coverage
 ```
 
 ## 8. CI gates (GitHub Actions, < 10 phút)
